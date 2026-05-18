@@ -217,7 +217,13 @@ jobs:
       - name: Show Xcode build log on failure
         if: failure()
         run: |
-          find buildlog -name "*.log" | head -5 | xargs cat 2>/dev/null || echo "No buildlog found"
+          xcodebuild archive \
+            -workspace LoopFollow_Second.xcworkspace \
+            -scheme LoopFollow \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath /tmp/test.xcarchive \
+            2>&1 | grep -E "error:|BUILD FAILED|warning:" | tail -50
 
       # Upload to TestFlight
       - name: Fastlane upload to TestFlight
